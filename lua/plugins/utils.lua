@@ -24,12 +24,10 @@ return {
 	},
 
 	-- ToggleTerm: floating terminal
+	-- <C-\> 由 open_mapping 统一处理（含 normal/insert/terminal 模式），
+	-- 无需在 keys 中重复声明
 	{
 		"akinsho/toggleterm.nvim",
-		keys = {
-			{ "<C-\\>", "<cmd>ToggleTerm direction=float<CR>", desc = "Float Terminal" },
-			{ "<C-\\>", "<cmd>ToggleTerm direction=float<CR>", desc = "Float Terminal", mode = "t" },
-		},
 		opts = {
 			size = 20,
 			open_mapping = [[<c-\>]],
@@ -120,7 +118,7 @@ return {
 	-- Render Markdown: better markdown rendering
 	{
 		"MeanderingProgrammer/render-markdown.nvim",
-		ft = { "markdown", "Avante" },
+		ft = "markdown",
 		opts = {},
 	},
 

@@ -13,7 +13,7 @@ end
 map("n", "j", [[v:count == 0 ? 'gj' : 'j']], { expr = true, silent = true, desc = "Move cursor down" })
 map("n", "k", [[v:count == 0 ? 'gk' : 'k']], { expr = true, silent = true, desc = "Move cursor up" })
 map("x", "j", [[v:count == 0 ? 'gj' : 'j']], { expr = true, silent = true, desc = "Move cursor down" })
-map("x", "k", [[v:count == 0 ? 'gk' : 'k']], { expr = true, silent = true, desc = "Move cursor down" })
+map("x", "k", [[v:count == 0 ? 'gk' : 'k']], { expr = true, silent = true, desc = "Move cursor up" })
 
 -- Basic file operations
 map("n", "<Leader>w", "<Cmd>w<CR>", o("Save"))

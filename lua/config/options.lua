@@ -62,4 +62,3 @@ opt.timeoutlen = 500
 opt.updatetime = 300
 opt.fixendofline = false
 opt.diffopt = vim.list_extend(vim.opt.diffopt:get(), { "algorithm:histogram", "linematch:60" })
-opt.jumpoptions = {}

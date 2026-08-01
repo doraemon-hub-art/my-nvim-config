@@ -54,7 +54,6 @@ return {
 	-- diffview.nvim: powerful git diff viewer
 	{
 		"sindrets/diffview.nvim",
-		event = "VeryLazy",
 		cmd = { "DiffviewOpen", "DiffviewClose", "DiffviewToggleFiles" },
 	},
 }

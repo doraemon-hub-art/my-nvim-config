@@ -92,12 +92,13 @@ autocmd({ "FocusGained", "TermClose", "TermLeave" }, {
 })
 
 -- Refresh LSP codelens on InsertLeave and BufEnter
+-- (nvim 0.12+: vim.lsp.codelens.refresh 已弃用，改用 enable(true, {bufnr=...}))
 augroup("lsp_codelens_refresh", { clear = true })
 autocmd({ "InsertLeave", "BufEnter" }, {
 	group = "lsp_codelens_refresh",
 	callback = function(args)
 		if vim.lsp.codelens then
-			pcall(vim.lsp.codelens.refresh, { bufnr = args.buf })
+			pcall(vim.lsp.codelens.enable, true, { bufnr = args.buf })
 		end
 	end,
 	desc = "Refresh LSP code lens",
@@ -127,15 +128,4 @@ autocmd("TermOpen", {
 	desc = "Disable numbers/signs in terminal",
 })
 
--- Large buffer: disable certain features on very large files
-augroup("large_buf_settings", { clear = true })
-autocmd("User", {
-	group = "large_buf_settings",
-	pattern = "AstroLargeBuf",
-	callback = function(args)
-		vim.opt_local.list = false
-		vim.b[args.buf].autoformat = false
-		vim.b[args.buf].completion = false
-	end,
-	desc = "Disable features on large buffers",
-})
+-- Large buffer settings（AstroNvim 遗留：AstroLargeBuf 事件无触发源，已删除）

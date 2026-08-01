@@ -19,7 +19,6 @@ return {
 				"rust_analyzer", -- Rust
 				"pyright", -- Python
 			},
-			automatic_installation = true,
 		},
 	},
 
@@ -59,7 +58,7 @@ return {
 				vim.keymap.set("n", "<Leader>D", vim.lsp.buf.type_definition, bufopts)
 				vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, bufopts)
 				vim.keymap.set("n", "]d", vim.diagnostic.goto_next, bufopts)
-				vim.keymap.set("n", "<Leader>ld", vim.diagnostic.open_float, bufopts)
+				-- <Leader>ld 已在 keymaps.lua 全局定义，此处不再重复
 				vim.keymap.set("n", "<Leader>lq", vim.diagnostic.setloclist, bufopts)
 			end
 
@@ -78,9 +77,7 @@ return {
 						},
 					},
 				},
-				clangd = {
-					capabilities = { offsetEncoding = "utf-8" },
-				},
+				clangd = {}, -- offsetEncoding 等默认值 lspconfig 已内置，无需覆盖
 				rust_analyzer = {},
 				vtsls = {},
 				pyright = {},
@@ -90,7 +87,7 @@ return {
 			for name, opts in pairs(servers) do
 				opts.capabilities = vim.tbl_deep_extend("force", capabilities, opts.capabilities or {})
 				opts.on_attach = on_attach
-				-- Merge user options over the default mason-lspconfig config
+				-- Merge user options over the lspconfig default config
 				local existing = vim.lsp.config[name] or {}
 				vim.lsp.config[name] = vim.tbl_deep_extend("force", existing, opts)
 				vim.lsp.enable(name)
