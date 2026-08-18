@@ -1,4 +1,4 @@
--- Vim options -- AstroNvim defaults + user overrides
+-- Vim options
 local opt = vim.opt
 
 -- General

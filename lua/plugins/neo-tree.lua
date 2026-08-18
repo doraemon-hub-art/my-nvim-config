@@ -1,4 +1,4 @@
--- Neo-tree: file explorer (AstroNvim default)
+-- Neo-tree: file explorer
 return {
 	"nvim-neo-tree/neo-tree.nvim",
 	dependencies = {

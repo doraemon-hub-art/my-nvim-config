@@ -1,4 +1,4 @@
--- Additional plugins from original AstroNvim config
+-- Additional plugins
 return {
 	-- Neogen: Doxygen annotation generator
 	{
@@ -41,9 +41,17 @@ return {
 			direction = "float",
 			float_opts = {
 				border = "curved",
-				winblend = 3,
+				winblend = 0,
 			},
 		},
+
+		-- 确保终端窗口有背景色，不透明
+		init = function()
+			local bg = vim.api.nvim_get_hl(0, { name = "Normal" }).bg
+			if bg then
+				vim.api.nvim_set_hl(0, "NormalFloat", { bg = bg })
+			end
+		end,
 	},
 
 	-- Smear cursor: smooth cursor animation
@@ -87,7 +95,7 @@ return {
 				dashboard.button("g", "󰊄  Live grep", ":Telescope live_grep <CR>"),
 				dashboard.button("q", "󰅚  Quit", ":qa<CR>"),
 			}
-			dashboard.section.footer.val = "astronvim → nvim-next ✨"
+			dashboard.section.footer.val = "nvim-next ✨"
 			return dashboard.config
 		end,
 	},
@@ -223,18 +231,5 @@ return {
 				{ "]", group = "Next" },
 			})
 		end,
-	},
-
-	-- mason-tool-installer: auto-install Mason packages
-	{
-		"WhoIsSethDaniel/mason-tool-installer.nvim",
-		dependencies = { "williamboman/mason.nvim" },
-		opts = {
-			ensure_installed = {
-				"lua-language-server",
-				"stylua",
-				"tree-sitter-cli",
-			},
-		},
 	},
 }

@@ -1,131 +1,124 @@
--- LSP configuration: mason + lspconfig + mason-lspconfig
+-- LSP configuration: Neovim 0.11+ native API
 return {
-	-- Mason: install LSP servers, formatters, linters
-	{
-		"williamboman/mason.nvim",
-		cmd = "Mason",
-		opts = {},
-	},
+	"neovim/nvim-lspconfig",
+	event = { "BufReadPre", "BufNewFile" },
+	config = function()
+		-- Load lspconfig to register server defaults into vim.lsp.config
+		require("lspconfig")
 
-	-- mason-lspconfig: bridge between mason and lspconfig
-	{
-		"williamboman/mason-lspconfig.nvim",
-		dependencies = { "williamboman/mason.nvim" },
-		opts = {
-			ensure_installed = {
-				"lua_ls", -- Lua
-				"clangd", -- C/C++
-				"vtsls", -- TypeScript/JavaScript
-				"rust_analyzer", -- Rust
-				"pyright", -- Python
-			},
-		},
-	},
+		-----------------------------------------------------------
+		-- 1. LspAttach: unified keymaps and features
+		-----------------------------------------------------------
+		vim.api.nvim_create_autocmd("LspAttach", {
+			group = vim.api.nvim_create_augroup("UserLspConfig", { clear = true }),
+			callback = function(event)
+				local bufnr = event.buf
+				local client = vim.lsp.get_client_by_id(event.data.client_id)
+				if not client then
+					return
+				end
 
-	-- lspconfig: configure language servers (nvim 0.11+ vim.lsp.config API)
-	{
-		"neovim/nvim-lspconfig",
-		dependencies = {
-			"williamboman/mason.nvim",
-			"williamboman/mason-lspconfig.nvim",
-			"hrsh7th/cmp-nvim-lsp",
-		},
-		event = { "BufReadPre", "BufNewFile" },
-		config = function()
-			-- Load lspconfig default configs into vim.lsp.config registry
-			-- (required for mason-lspconfig auto-install to work)
-			require("lspconfig")
+				local bufmap = function(mode, lhs, rhs, desc)
+					vim.keymap.set(
+						mode,
+						lhs,
+						rhs,
+						{ buffer = bufnr, noremap = true, silent = true, desc = "LSP: " .. desc }
+					)
+				end
 
-			local capabilities = require("cmp_nvim_lsp").default_capabilities()
-
-			-- LSP keymaps attached on LspAttach
-			local on_attach = function(client, bufnr)
-				local bufopts = { noremap = true, silent = true, buffer = bufnr }
-
-				vim.keymap.set("n", "gD", vim.lsp.buf.declaration, bufopts)
-				vim.keymap.set("n", "gd", vim.lsp.buf.definition, bufopts)
-				vim.keymap.set("n", "K", vim.lsp.buf.hover, bufopts)
-				vim.keymap.set("n", "gi", vim.lsp.buf.implementation, bufopts)
-				vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, bufopts)
-				vim.keymap.set("n", "<Leader>wa", vim.lsp.buf.add_workspace_folder, bufopts)
-				vim.keymap.set("n", "<Leader>wr", vim.lsp.buf.remove_workspace_folder, bufopts)
-				vim.keymap.set("n", "<Leader>wl", function()
+				bufmap("n", "gD", vim.lsp.buf.declaration, "Declaration")
+				bufmap("n", "gd", vim.lsp.buf.definition, "Definition")
+				bufmap("n", "K", vim.lsp.buf.hover, "Hover docs")
+				bufmap("n", "gi", vim.lsp.buf.implementation, "Implementation")
+				bufmap("n", "<C-k>", vim.lsp.buf.signature_help, "Signature help")
+				bufmap("n", "<Leader>wa", vim.lsp.buf.add_workspace_folder, "Add workspace folder")
+				bufmap("n", "<Leader>wr", vim.lsp.buf.remove_workspace_folder, "Remove workspace folder")
+				bufmap("n", "<Leader>wl", function()
 					print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-				end, bufopts)
-				vim.keymap.set("n", "<Leader>rn", vim.lsp.buf.rename, bufopts)
-				vim.keymap.set({ "n", "v" }, "<Leader>ca", vim.lsp.buf.code_action, bufopts)
-				vim.keymap.set("n", "gr", vim.lsp.buf.references, bufopts)
-				vim.keymap.set("n", "<Leader>D", vim.lsp.buf.type_definition, bufopts)
-				vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, bufopts)
-				vim.keymap.set("n", "]d", vim.diagnostic.goto_next, bufopts)
-				-- <Leader>ld 已在 keymaps.lua 全局定义，此处不再重复
-				vim.keymap.set("n", "<Leader>lq", vim.diagnostic.setloclist, bufopts)
-			end
+				end, "List workspace folders")
+				bufmap("n", "<Leader>rn", vim.lsp.buf.rename, "Rename")
+				bufmap({ "n", "v" }, "<Leader>ca", vim.lsp.buf.code_action, "Code action")
+				bufmap("n", "gr", vim.lsp.buf.references, "References")
+				bufmap("n", "<Leader>D", vim.lsp.buf.type_definition, "Type definition")
+				bufmap("n", "[d", vim.diagnostic.goto_prev, "Prev diagnostic")
+				bufmap("n", "]d", vim.diagnostic.goto_next, "Next diagnostic")
+				-- <Leader>ld is global in keymaps.lua (diagnostic float)
+				bufmap("n", "<Leader>lq", vim.diagnostic.setloclist, "Diagnostic to loclist")
 
-			-- Server-specific configurations
-			local servers = {
-				lua_ls = {
-					settings = {
-						Lua = {
-							runtime = { version = "LuaJIT" },
-							diagnostics = { globals = { "vim" } },
-							workspace = {
-								library = vim.api.nvim_get_runtime_file("", true),
-								checkThirdParty = false,
-							},
-							telemetry = { enable = false },
-						},
+				-- Enable inlay hints if supported
+				if client:supports_method("textDocument/inlayHint") then
+					vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+				end
+
+				-- Enable codelens if supported
+				if client:supports_method("textDocument/codeLens") then
+					vim.lsp.codelens.refresh({ bufnr = bufnr })
+				end
+			end,
+		})
+
+		-----------------------------------------------------------
+		-- 2. Global capabilities (applied to all servers)
+		-----------------------------------------------------------
+		local capabilities = vim.lsp.protocol.make_client_capabilities()
+		capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
+
+		vim.lsp.config("*", {
+			capabilities = capabilities,
+		})
+
+		-----------------------------------------------------------
+		-- 3. Per-server configuration overrides
+		-----------------------------------------------------------
+		vim.lsp.config("clangd", {
+			cmd = {
+				"clangd",
+				"--background-index",
+				"--clang-tidy",
+				"--header-insertion=iwyu",
+				"--completion-style=detailed",
+			},
+		})
+
+		vim.lsp.config("lua_ls", {
+			settings = {
+				Lua = {
+					runtime = { version = "LuaJIT" },
+					diagnostics = { globals = { "vim" } },
+					workspace = {
+						library = vim.api.nvim_get_runtime_file("", true),
+						checkThirdParty = false,
 					},
+					telemetry = { enable = false },
 				},
-				clangd = {}, -- offsetEncoding 等默认值 lspconfig 已内置，无需覆盖
-				rust_analyzer = {},
-				vtsls = {},
-				pyright = {},
-			}
+			},
+		})
 
-			-- Setup each server using vim.lsp.config (nvim 0.11+ API)
-			for name, opts in pairs(servers) do
-				opts.capabilities = vim.tbl_deep_extend("force", capabilities, opts.capabilities or {})
-				opts.on_attach = on_attach
-				-- Merge user options over the lspconfig default config
-				local existing = vim.lsp.config[name] or {}
-				vim.lsp.config[name] = vim.tbl_deep_extend("force", existing, opts)
-				vim.lsp.enable(name)
+		-- Others use lspconfig defaults — no override needed
+		-- clangd: offsetEncoding etc. built into lspconfig default
+		-- rust_analyzer, pyright, vtsls: defaults are fine
+
+		-----------------------------------------------------------
+		-- 4. Enable servers
+		-----------------------------------------------------------
+		local servers = { "clangd", "lua_ls", "rust_analyzer", "pyright", "vtsls" }
+		for _, server in ipairs(servers) do
+			vim.lsp.enable(server)
+		end
+
+		-----------------------------------------------------------
+		-- 5. User commands
+		-----------------------------------------------------------
+		-- Toggle inlay hints
+		vim.api.nvim_create_user_command("LspToggleInlayHints", function()
+			local enabled = vim.lsp.inlay_hint.is_enabled(0)
+			if enabled then
+				vim.lsp.inlay_hint.disable(0)
+			else
+				vim.lsp.inlay_hint.enable(0)
 			end
-
-			-- Inlay hints toggle (Neovim 0.10+ API)
-			vim.api.nvim_create_user_command("LspToggleInlayHints", function()
-				local enabled = vim.lsp.inlay_hint.is_enabled(0)
-				if enabled then
-					vim.lsp.inlay_hint.disable(0)
-				else
-					vim.lsp.inlay_hint.enable(0)
-				end
-				vim.notify("Inlay hints: " .. (enabled and "OFF" or "ON"))
-			end, { desc = "Toggle LSP inlay hints" })
-
-			-- Semantic tokens toggle
-			local semantic_tokens_enabled = true
-			vim.api.nvim_create_user_command("LspToggleSemanticTokens", function()
-				semantic_tokens_enabled = not semantic_tokens_enabled
-				if semantic_tokens_enabled then
-					vim.schedule(function()
-						vim.cmd("edit")
-					end)
-				end
-				vim.notify("Semantic tokens: " .. (semantic_tokens_enabled and "ON" or "OFF"))
-			end, { desc = "Toggle LSP semantic tokens" })
-		end,
-	},
-
-	-- nvim-lsp-signature: show function signature popup
-	{
-		"ray-x/lsp_signature.nvim",
-		event = "VeryLazy",
-		opts = {
-			hint_enable = true,
-			hint_prefix = "󰁡 ",
-			handler_opts = { border = "rounded" },
-		},
-	},
+			vim.notify("Inlay hints: " .. (enabled and "OFF" or "ON"))
+		end, { desc = "Toggle LSP inlay hints" })
+	end,
 }

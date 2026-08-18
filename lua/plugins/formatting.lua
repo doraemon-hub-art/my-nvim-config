@@ -17,14 +17,6 @@ return {
 			markdown = { "prettier" },
 			bash = { "shfmt" },
 		},
-		formatters = {
-			clang_format = {
-				prepend_args = function()
-					local custom_path = vim.fn.stdpath("config") .. "/my_config/.clang-format"
-					return { "-style=file:" .. custom_path }
-				end,
-			},
-		},
 		format_on_save = {
 			timeout_ms = 1000,
 			lsp_format = "fallback",

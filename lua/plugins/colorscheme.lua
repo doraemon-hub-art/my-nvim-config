@@ -1,6 +1,6 @@
 -- Colorscheme configuration
 return {
-	-- TokyoNight (active theme from original config, "tokyonight-day")
+	-- TokyoNight (active theme)
 	{
 		"folke/tokyonight.nvim",
 		lazy = false,
@@ -13,16 +13,12 @@ return {
 			vim.cmd.colorscheme("tokyonight-day")
 		end,
 	},
-	-- Nightfox series (includes Carbonfox)
+	-- Nightfox series (lazy-loaded on :colorscheme switch)
 	{
 		"EdenEast/nightfox.nvim",
-		lazy = false,
-		priority = 1000,
 	},
-	-- Kanagawa
+	-- Kanagawa (lazy-loaded on :colorscheme switch)
 	{
 		"rebelot/kanagawa.nvim",
-		lazy = false,
-		priority = 1000,
 	},
 }

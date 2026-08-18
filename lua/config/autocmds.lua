@@ -1,9 +1,8 @@
--- Autocommands -- AstroNvim defaults + user additions
+-- Autocommands
 local augroup = vim.api.nvim_create_augroup
 local autocmd = vim.api.nvim_create_autocmd
 
 -- Auto-create parent directories when saving a new file
--- Equivalent to AstroNvim's create_dir autocmd
 augroup("create_dir", { clear = true })
 autocmd("BufWritePre", {
 	group = "create_dir",
@@ -127,5 +126,3 @@ autocmd("TermOpen", {
 	end,
 	desc = "Disable numbers/signs in terminal",
 })
-
--- Large buffer settings（AstroNvim 遗留：AstroLargeBuf 事件无触发源，已删除）

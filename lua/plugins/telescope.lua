@@ -9,6 +9,7 @@ return {
 	keys = {
 		{ "<Leader>ff", "<cmd>Telescope find_files<CR>", desc = "Find files" },
 		{ "<Leader>fg", "<cmd>Telescope live_grep<CR>", desc = "Live grep" },
+		{ "<Leader>fw", "<cmd>Telescope live_grep<CR>", desc = "Grep workspace" },
 		{ "<Leader>fb", "<cmd>Telescope buffers<CR>", desc = "Find buffers" },
 		{ "<Leader>fh", "<cmd>Telescope help_tags<CR>", desc = "Help tags" },
 		{ "<Leader>fs", "<cmd>Telescope lsp_document_symbols<CR>", desc = "Document symbols" },

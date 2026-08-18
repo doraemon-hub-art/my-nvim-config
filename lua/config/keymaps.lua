@@ -1,13 +1,9 @@
--- Global keymaps -- AstroNvim defaults + user additions
+-- Global keymaps
 local map = vim.keymap.set
 
 local function o(desc)
 	return { noremap = true, silent = true, desc = desc }
 end
-
--- =============================================================================
--- AstroNvim default normal mode mappings
--- =============================================================================
 
 -- Better j/k: move by display lines with gj/gk when count is 0
 map("n", "j", [[v:count == 0 ? 'gj' : 'j']], { expr = true, silent = true, desc = "Move cursor down" })
