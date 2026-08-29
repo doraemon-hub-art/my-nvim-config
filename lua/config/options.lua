@@ -14,6 +14,8 @@ opt.relativenumber = true
 -- Cursor
 opt.cursorline = true
 opt.cursorcolumn = true
+opt.scrolloff = 8
+opt.sidescrolloff = 8
 opt.virtualedit = "block"
 
 -- Wrap

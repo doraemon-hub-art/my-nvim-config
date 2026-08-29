@@ -195,6 +195,12 @@ end, o("Terminal right window"))
 -- Additional user mappings (porting from old config)
 -- =============================================================================
 
+-- Scroll half-page and recenter (like AstroNvim)
+map("n", "<C-d>", "<C-d>zz", o("Scroll half down and recenter"))
+map("n", "<C-u>", "<C-u>zz", o("Scroll half up and recenter"))
+map("n", "<C-f>", "<C-f>zz", o("Page down and recenter"))
+map("n", "<C-b>", "<C-b>zz", o("Page up and recenter"))
+
 -- Clear search highlight with Escape
 map("n", "<Esc>", function()
 	if vim.v.hlsearch and vim.v.hlsearch > 0 then

@@ -1,0 +1,3 @@
+BasedOnStyle: Google
+# You can also add custom overrides here if needed
+IndentWidth: 2

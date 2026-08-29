@@ -46,14 +46,14 @@ return {
 				-- <Leader>ld is global in keymaps.lua (diagnostic float)
 				bufmap("n", "<Leader>lq", vim.diagnostic.setloclist, "Diagnostic to loclist")
 
-				-- Enable inlay hints if supported
+				-- Enable inlay hints if supported (pcall for Neovim 0.11.x stale-col bug)
 				if client:supports_method("textDocument/inlayHint") then
-					vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+					pcall(vim.lsp.inlay_hint.enable, true, { bufnr = bufnr })
 				end
 
 				-- Enable codelens if supported
 				if client:supports_method("textDocument/codeLens") then
-					vim.lsp.codelens.refresh({ bufnr = bufnr })
+					pcall(vim.lsp.codelens.refresh, { bufnr = bufnr })
 				end
 			end,
 		})

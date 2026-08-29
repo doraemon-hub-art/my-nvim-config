@@ -5,12 +5,15 @@ return {
 		local icon = require("hieulw.icons")
 		local lualine = require("lualine")
 
-		-- ── system info combined component ──────────────────────────
+		-- ── system info — timer-driven, zero IO in provider ─────────
 
+		local sys_cache = ""
 		local cpu_prev
-		local sys_info = function()
+
+		local function update_stats()
 			local parts = {}
 
+			-- memory
 			local f = io.open("/proc/meminfo")
 			if f then
 				local total, avail
@@ -24,13 +27,7 @@ return {
 				end
 			end
 
-			local f = io.open("/sys/class/thermal/thermal_zone0/temp")
-			if f then
-				local v = f:read("*n")
-				f:close()
-				if v then table.insert(parts, string.format(" %d°C", v / 1000)) end
-			end
-
+			-- cpu
 			local f = io.open("/proc/stat")
 			if f then
 				local line = f:read()
@@ -45,8 +42,7 @@ return {
 							local dtotal = total - cpu_prev.total
 							local didle = idle_total - cpu_prev.idle
 							if dtotal > 0 then
-								local pct = (dtotal - didle) / dtotal * 100
-								table.insert(parts, string.format(" %.1f%%%%", pct))
+								table.insert(parts, string.format(" %.0f%%%%", (dtotal - didle) / dtotal * 100))
 							end
 						end
 						cpu_prev = { total = total, idle = idle_total }
@@ -54,9 +50,24 @@ return {
 				end
 			end
 
-			if #parts == 0 then return "" end
-			return table.concat(parts, "  ")
+			-- thermal
+			local f = io.open("/sys/class/thermal/thermal_zone0/temp")
+			if f then
+				local v = f:read("*n")
+				f:close()
+				if v then table.insert(parts, string.format(" %d°C", v / 1000)) end
+			end
+
+			if #parts > 0 then
+				sys_cache = table.concat(parts, "  ")
+			end
 		end
+
+		local luv = vim.uv or vim.loop
+		local timer = luv.new_timer()
+		timer:start(0, 2000, vim.schedule_wrap(update_stats))
+
+		local sys_info = function() return sys_cache end
 
 		-- ── diff component with gitsigns source ─────────────────────
 
