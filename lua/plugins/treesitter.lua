@@ -12,9 +12,6 @@ return {
 			install_dir = vim.fn.stdpath("data") .. "/site",
 		})
 
-		-- 安装缺失的 parser（已安装的自动跳过，异步执行）
-		-- 无需安装的内置 parser：lua, vim, vimdoc, query, markdown,
-		-- markdown_inline, c（nvim 自带）
 		local ok, ts = pcall(require, "nvim-treesitter")
 		if ok then
 			ts.install({
@@ -27,7 +24,7 @@ return {
 				"javascript",
 				"typescript",
 				"proto",
-			})
+			}, { sync = true })
 		end
 	end,
 }

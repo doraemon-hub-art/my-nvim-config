@@ -212,21 +212,54 @@ end, { expr = true, desc = "Escape / Clear search highlight" })
 -- Keep cursor in place when joining lines
 map("n", "J", "mzJ`z", o("Join lines"))
 
+-- Format code
+map("n", "<Leader>lf", function()
+  require("conform").format()
+end, o("Format code"))
+
 -- File header comment (<Leader>df)
 map("n", "<Leader>df", function()
 	local file = vim.fn.expand("%:t")
 	local date = os.date("%Y-%m-%d")
 	local year = os.date("%Y")
-	local lines = {
-		"/**",
-		" * @file " .. file,
-		" * @author doraemon-hub-art",
-		" * @brief ",
-		" * @date " .. date,
-		" *",
-		" * @copyright Copyright (c) " .. year,
-		" */",
-	}
+
+	local ft = vim.bo.filetype
+	local lines
+	if ft == "lua" or ft == "sh" or ft == "bash" or ft == "zsh" or ft == "sql" then
+		lines = {
+			"--[[",
+			" * @file " .. file,
+			" * @author doraemon-hub-art",
+			" * @brief ",
+			" * @date " .. date,
+			" *",
+			" * @copyright Copyright (c) " .. year,
+			" --]]",
+		}
+	elseif ft == "python" or ft == "yaml" or ft == "ruby" or ft == "perl" or ft == "makefile" then
+		lines = {
+			"#[[",
+			" * @file " .. file,
+			" * @author doraemon-hub-art",
+			" * @brief ",
+			" * @date " .. date,
+			" *",
+			" * @copyright Copyright (c) " .. year,
+			" #]]",
+		}
+	else
+		-- Default: C-style block comment
+		lines = {
+			"/**",
+			" * @file " .. file,
+			" * @author doraemon-hub-art",
+			" * @brief ",
+			" * @date " .. date,
+			" *",
+			" * @copyright Copyright (c) " .. year,
+			" */",
+		}
+	end
 	vim.api.nvim_buf_set_lines(0, 0, 0, false, lines)
 	vim.api.nvim_win_set_cursor(0, { 4, 11 })
 end, o("Generate file header"))

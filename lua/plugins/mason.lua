@@ -18,6 +18,7 @@ return {
 				-- Formatters & linters
 				"stylua",
 				"shfmt",
+				"prettier",
 				-- Tools
 				"tree-sitter-cli",
 			},

@@ -1,4 +1,6 @@
 -- conform.nvim: code formatting
+local config_dir = vim.fn.stdpath("config") .. "/config/format"
+
 return {
 	"stevearc/conform.nvim",
 	event = { "BufWritePre" },
@@ -15,7 +17,24 @@ return {
 			json = { "prettier" },
 			yaml = { "prettier" },
 			markdown = { "prettier" },
+			css = { "prettier" },
+			scss = { "prettier" },
+			html = { "prettier" },
 			bash = { "shfmt" },
+		},
+		formatters = {
+			clang_format = {
+				command = "clang-format",
+				args = { "--style=file:" .. config_dir .. "/.clang-format" },
+			},
+			stylua = {
+				command = "stylua",
+				args = { "--config-path", config_dir .. "/stylua.toml", "-" },
+			},
+			prettier = {
+				command = "prettier",
+				args = { "--config", config_dir .. "/.prettierrc.json", "--stdin-filepath", "$FILENAME" },
+			},
 		},
 		format_on_save = function()
 			return nil
