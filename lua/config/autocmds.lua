@@ -114,6 +114,17 @@ autocmd("FileType", {
 	desc = "Unlist quickfix buffers",
 })
 
+-- Proto filetype detection
+augroup("proto_filetype", { clear = true })
+autocmd({ "BufRead", "BufNewFile" }, {
+	group = "proto_filetype",
+	pattern = "*.proto",
+	callback = function()
+		vim.bo.filetype = "proto"
+	end,
+	desc = "Set filetype=proto for .proto files",
+})
+
 -- Terminal settings: disable line numbers, fold, sign column
 augroup("terminal_settings", { clear = true })
 autocmd("TermOpen", {

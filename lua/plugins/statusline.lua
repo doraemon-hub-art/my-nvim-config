@@ -18,8 +18,11 @@ return {
 			if f then
 				local total, avail
 				for line in f:lines() do
-					if line:find("^MemTotal:") then total = tonumber(line:match("%d+"))
-					elseif line:find("^MemAvailable:") then avail = tonumber(line:match("%d+")) end
+					if line:find("^MemTotal:") then
+						total = tonumber(line:match("%d+"))
+					elseif line:find("^MemAvailable:") then
+						avail = tonumber(line:match("%d+"))
+					end
 				end
 				f:close()
 				if total and avail then
@@ -55,7 +58,9 @@ return {
 			if f then
 				local v = f:read("*n")
 				f:close()
-				if v then table.insert(parts, string.format(" %d°C", v / 1000)) end
+				if v then
+					table.insert(parts, string.format(" %d°C", v / 1000))
+				end
 			end
 
 			if #parts > 0 then
@@ -67,7 +72,9 @@ return {
 		local timer = luv.new_timer()
 		timer:start(0, 2000, vim.schedule_wrap(update_stats))
 
-		local sys_info = function() return sys_cache end
+		local sys_info = function()
+			return sys_cache
+		end
 
 		-- ── diff component with gitsigns source ─────────────────────
 
@@ -125,7 +132,9 @@ return {
 			local ok, result = pcall(function()
 				local bufnr = vim.api.nvim_win_get_buf(0)
 				local total = vim.api.nvim_buf_line_count(bufnr)
-				if total == 0 then return "" end
+				if total == 0 then
+					return ""
+				end
 				local cur = vim.api.nvim_win_get_cursor(0)[1]
 				local pct = math.floor(cur / total * 100 + 0.5)
 				local bar_width = 10
@@ -133,7 +142,9 @@ return {
 				local bar = string.rep("█", filled) .. string.rep("░", bar_width - filled)
 				return string.format("%d%%%% %s", pct, bar)
 			end)
-			if ok then return result end
+			if ok then
+				return result
+			end
 			return ""
 		end
 

@@ -7,11 +7,20 @@ return {
 		opts = {
 			enabled = true,
 			languages = {
-				cpp = {
-					template = { annotation_convention = "doxygen" },
-				},
+				cpp = {},
+				typescript = {},
+				javascript = {},
 			},
 		},
+		config = function(_, opts)
+			local doxygen = require("neogen.templates.doxygen")
+			-- Add doxygen convention to TS/JS (default templates only have jsdoc/tsdoc)
+			for _, lang in ipairs({ "typescript", "javascript" }) do
+				local ft = require("neogen.configurations." .. lang)
+				ft.template:add_custom_annotation("doxygen", doxygen, true)
+			end
+			require("neogen").setup(opts)
+		end,
 		keys = {
 			{
 				"<Leader>dg",

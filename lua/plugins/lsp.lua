@@ -102,7 +102,12 @@ return {
 		-----------------------------------------------------------
 		-- 4. Enable servers
 		-----------------------------------------------------------
-		local servers = { "clangd", "lua_ls", "rust_analyzer", "pyright", "vtsls" }
+		vim.lsp.config("buf", {
+			cmd = { "buf", "beta", "lsp" },
+			filetypes = { "proto" },
+		})
+
+		local servers = { "clangd", "lua_ls", "rust_analyzer", "pyright", "vtsls", "bashls", "buf" }
 		for _, server in ipairs(servers) do
 			vim.lsp.enable(server)
 		end

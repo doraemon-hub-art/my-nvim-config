@@ -56,7 +56,7 @@ map("n", "]b", ":bnext<CR>", o("Next buffer"))
 map("n", "[b", ":bprevious<CR>", o("Previous buffer"))
 
 -- Buffer management
-map("n", "<Leader>c", ":bdelete<CR>", o("Close buffer"))
+map("n", "<Leader>c", ":close<CR>", o("Close window"))
 map("n", "<Leader>C", ":bdelete!<CR>", o("Force close buffer"))
 map("n", "<Leader>bd", function()
 	local bufs = vim.fn.getbufinfo({ buflisted = 1 })
@@ -214,7 +214,7 @@ map("n", "J", "mzJ`z", o("Join lines"))
 
 -- Format code
 map("n", "<Leader>lf", function()
-  require("conform").format()
+	require("conform").format()
 end, o("Format code"))
 
 -- File header comment (<Leader>df)

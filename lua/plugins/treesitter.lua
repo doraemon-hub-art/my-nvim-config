@@ -12,9 +12,9 @@ return {
 			install_dir = vim.fn.stdpath("data") .. "/site",
 		})
 
-		local ok, ts = pcall(require, "nvim-treesitter")
+		local ok, install = pcall(require, "nvim-treesitter.install")
 		if ok then
-			ts.install({
+			install.ensure_installed_sync({
 				"doxygen",
 				"cpp",
 				"cmake",
@@ -24,7 +24,7 @@ return {
 				"javascript",
 				"typescript",
 				"proto",
-			}, { sync = true })
+			})
 		end
 	end,
 }
