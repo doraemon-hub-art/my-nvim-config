@@ -155,6 +155,8 @@ map("i", "<A-l>", "<Right>", o("Move right"))
 -- =============================================================================
 map("v", "<", "<gv", o("Unindent line"))
 map("v", ">", ">gv", o("Indent line"))
+map("v", "<Tab>", ">gv", o("Indent line"))
+map("v", "<S-Tab>", "<gv", o("Unindent line"))
 map("v", "<A-j>", ":m '>+1<CR>gv=gv", o("Move line down"))
 map("v", "<A-k>", ":m '<-2<CR>gv=gv", o("Move line up"))
 

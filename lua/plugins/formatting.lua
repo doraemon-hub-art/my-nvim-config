@@ -20,7 +20,9 @@ return {
 			css = { "prettier" },
 			scss = { "prettier" },
 			html = { "prettier" },
+			sh = { "shfmt" },
 			bash = { "shfmt" },
+			zsh = { "shfmt" },
 		},
 		formatters = {
 			clang_format = {
@@ -34,6 +36,10 @@ return {
 			prettier = {
 				command = "prettier",
 				args = { "--config", config_dir .. "/.prettierrc.json", "--stdin-filepath", "$FILENAME" },
+			},
+			shfmt = {
+				command = "shfmt",
+				args = { "--config-path", config_dir .. "/.shellformatrc", "-" },
 			},
 		},
 		format_on_save = function()

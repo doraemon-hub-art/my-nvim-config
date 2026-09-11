@@ -1,0 +1,7 @@
+{
+  "indent": 2,
+  "binaryNextLine": true,
+  "switchCaseIndent": true,
+  "spaceRedirects": false,
+  "keepPadding": false
+}
