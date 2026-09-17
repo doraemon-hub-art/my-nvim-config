@@ -2,7 +2,7 @@ return {
 	"nvim-lualine/lualine.nvim",
 	dependencies = { "nvim-tree/nvim-web-devicons" },
 	config = function()
-		local icon = require("hieulw.icons")
+		local icon = require("config.icons")
 		local lualine = require("lualine")
 
 		-- ── system info — timer-driven, zero IO in provider ─────────
