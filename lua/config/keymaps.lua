@@ -11,6 +11,16 @@ map("n", "k", [[v:count == 0 ? 'gk' : 'k']], { expr = true, silent = true, desc 
 map("x", "j", [[v:count == 0 ? 'gj' : 'j']], { expr = true, silent = true, desc = "Move cursor down" })
 map("x", "k", [[v:count == 0 ? 'gk' : 'k']], { expr = true, silent = true, desc = "Move cursor up" })
 
+-- Leader+1..9: jump to buffer by ordinal number (matches bufferline numbers)
+for i = 1, 9 do
+	map("n", "<Leader>" .. i, function()
+		local ok = pcall(vim.cmd, "BufferLineGoToBuffer " .. i)
+		if not ok then
+			vim.notify(("Buffer %d not found"):format(i), vim.log.levels.WARN)
+		end
+	end, o("Go to buffer " .. i))
+end
+
 -- Basic file operations
 map("n", "<Leader>w", "<Cmd>w<CR>", o("Save"))
 map("n", "<Leader>q", "<Cmd>confirm q<CR>", o("Quit Window"))

@@ -113,7 +113,21 @@ return {
 	{
 		"folke/noice.nvim",
 		event = "VeryLazy",
-		dependencies = { "MunifTanjim/nui.nvim" },
+		dependencies = {
+			"MunifTanjim/nui.nvim",
+			{
+				"rcarriga/nvim-notify",
+				opts = {
+					stages = "slide",
+					timeout = 3000,
+					top_down = true,
+					background_colour = "Normal",
+				},
+				init = function()
+					vim.notify = require("notify")
+				end,
+			},
+		},
 		opts = {
 			lsp = {
 				override = {
@@ -165,6 +179,25 @@ return {
 				},
 			})
 		end,
+	},
+
+	-- Bufferline: buffer tabs at the top
+	{
+		"akinsho/bufferline.nvim",
+		event = "VeryLazy",
+		dependencies = { "nvim-tree/nvim-web-devicons" },
+		opts = {
+			options = {
+				always_show_bufferline = true,
+				numbers = "ordinal",
+				offsets = {
+					{ filetype = "neo-tree", text = "Explorer", highlight = "Directory" },
+				},
+				separator_style = "slant",
+				show_buffer_close_icons = true,
+				show_close_icon = false,
+			},
+		},
 	},
 
 	-- Colorful window separator
