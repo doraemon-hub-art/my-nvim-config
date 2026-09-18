@@ -20,6 +20,20 @@ return {
 				ft.template:add_custom_annotation("doxygen", doxygen, true)
 			end
 			require("neogen").setup(opts)
+			-- Upstream bug: generator.lua:351 hardcodes end_col=1 for the range extmark, which
+			-- is out of range when the line it lands on is empty (e.g. generating a file header
+			-- in an empty buffer). Clamp to the actual line length.
+			local mark = require("neogen.mark")
+			local clamp_end_col = function(bufnr, end_row, end_col)
+				local line = vim.api.nvim_buf_get_lines(bufnr, end_row, end_row + 1, false)[1] or ""
+				return math.min(end_col, #line)
+			end
+			local orig_add_range_mark = mark.add_range_mark
+			mark.add_range_mark = function(self, range)
+				local row, col, end_row, end_col = unpack(range)
+				range = { row, col, end_row, clamp_end_col(self.bufnr, end_row, end_col) }
+				return orig_add_range_mark(self, range)
+			end
 		end,
 		keys = {
 			{

@@ -53,8 +53,20 @@ return {
 				end
 			end
 
-			-- thermal
-			local f = io.open("/sys/class/thermal/thermal_zone0/temp")
+			-- thermal: CPU package temp from coretemp (hwmon name match, not thermal_zone0
+			-- which is the ACPI board sensor and reads ~10C low)
+			local f
+			for h in vim.fs.dir("/sys/class/hwmon") do
+				local nf = io.open("/sys/class/hwmon/" .. h .. "/name")
+				if nf then
+					local name = nf:read("*l")
+					nf:close()
+					if name == "coretemp" then
+						f = io.open("/sys/class/hwmon/" .. h .. "/temp1_input")
+						break
+					end
+				end
+			end
 			if f then
 				local v = f:read("*n")
 				f:close()
