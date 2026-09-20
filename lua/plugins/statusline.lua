@@ -175,7 +175,7 @@ return {
 				lualine_b = { "branch", sys_info },
 				lualine_c = {},
 				lualine_x = { diff, diagnostics, { "filetype", icon_only = true }, lsp_status, scroll_progress },
-				lualine_y = {},
+				lualine_y = { "location" },
 				lualine_z = {},
 			},
 			winbar = {
