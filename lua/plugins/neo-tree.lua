@@ -1,4 +1,23 @@
 -- Neo-tree: file explorer
+
+-- 这两个是自定义命令：neo-tree 新版已删掉 system_open / copy_selector
+local function system_open(state)
+	local node = state.tree:get_node()
+	local path = node and (node.path or node:get_id())
+	if path then
+		vim.ui.open(path)
+	end
+end
+
+local function copy_path(state)
+	local node = state.tree:get_node()
+	local path = node and (node.path or node:get_id())
+	if path then
+		-- 写无名寄存器：装了剪贴板工具时会跟着进系统剪贴板，没装至少寄存器里有
+		vim.fn.setreg('"', path)
+	end
+end
+
 return {
 	"nvim-neo-tree/neo-tree.nvim",
 	dependencies = {
@@ -54,14 +73,14 @@ return {
 		window = {
 			width = 30,
 			mappings = {
-				["<S-CR>"] = "system_open",
+				["<S-CR>"] = { system_open, desc = "System open" },
 				["<Space>"] = false,
 				["[b"] = "prev_source",
 				["]b"] = "next_source",
-				O = "system_open",
-				Y = "copy_selector",
-				h = "parent_or_close",
-				l = "child_or_open",
+				O = { system_open, desc = "System open" },
+				Y = { copy_path, desc = "Copy path to clipboard" },
+				h = "close_node",
+				l = "open",
 			},
 		},
 		filesystem = {
